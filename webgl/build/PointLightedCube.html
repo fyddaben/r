@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Point lighted sphere (Per fragment)</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+    <script type='text/template' id='vsh_tmpl'>
+      attribute vec4 a_Position;
+      attribute vec4 a_Normal;//法向量
+      uniform mat4 u_MvpMatrix; //透视矩阵
+      uniform mat4 u_NormalMatrix; //模型矩阵的逆转置
+      uniform mat4 u_ModelMatrix; //模型矩阵
+      varying vec4 v_Color;
+      varying vec3 v_Normal;
+      varying vec3 v_Position;
+      void main() {
+        vec4 color = vec4(1.0, 1.0, 1.0, 1.0);
+        gl_Position = u_MvpMatrix * a_Position;
+        v_Position = vec3(u_ModelMatrix * a_Position);
+        v_Normal = normalize(vec3(u_NormalMatrix * a_Normal));
+        v_Color = color;
+      }
+    </script>
+    <script type='text/template' id='fsh_tmpl'>
+      #ifdef GL_ES
+      precision mediump float;
+      #endif
+      uniform vec3 u_LightColor;//点光源颜色
+      uniform vec3 u_LightPosition;//点光源位置
+      uniform vec3 u_AmbientLight;//环境光颜色
+      varying vec3 v_Normal;
+      varying vec3 v_Position;
+      varying vec4 v_Color;
+      void main() {
+        vec3 normal = normalize(v_Normal);
+        vec3 lightDirection = normalize(u_LightPosition - v_Position);
+        float nDotL = max(dot(lightDirection, normal), 0.0);
+        vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;
+        vec3 ambient = u_AmbientLight * v_Color.rgb;
+        gl_FragColor = vec4(diffuse + ambient, v_Color.a);
+      }
+    </script>    <script src="./jsmin/_lib/jquery.min.js"></script>
+    <script src="./jsmin/_lib/doT.min.js"></script>
+    <script src="./jsmin/_lib/webgl-utils.js"></script>
+    <script src="./jsmin/_lib/webgl-debug.js"></script>
+    <script src="./jsmin/_lib/cuon-utils.js"></script>
+    <script src="./jsmin/_lib/cuon-matrix.js"></script>
+  <script src="./jsmin/PointLightedCube.min.js?3442ac98f6"></script>
+  </body>
+</html>

@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>textureQuad-webgl</title>
+    <title>perspectiveView-webgl</title>
     <meta name="description" content="" />
-    <link rel="stylesheet" href="./cssmin/index.min.css?a4325ff4a8?a4325ff4a8" />
+    <link rel="stylesheet" href="./cssmin/index.min.css" />
   </head>
   <body >
     <canvas id='webgl' width='400' height='400'>
@@ -13,26 +13,29 @@
     </canvas>
     <script type='text/template' id='vsh_tmpl'>
       attribute vec4 a_Position;
-      attribute vec2 a_TexCoord;
-      varying vec2 v_TexCoord;
+      attribute vec4 a_Color;
+      varying vec4 v_Color;
+      uniform mat4 u_ViewMatrix;
+      uniform mat4 u_ProjMatrix;
       void main() {
-        gl_Position = a_Position;
-        v_TexCoord = a_TexCoord;
+        gl_Position = u_ProjMatrix * u_ViewMatrix * a_Position;
+        v_Color = a_Color;
       }
     </script>
     <script type='text/template' id='fsh_tmpl'>
+      #ifdef GL_ES
       precision mediump float;
-      varying vec2 v_TexCoord;
-      uniform sampler2D u_Sampler;
+      #endif
+      varying vec4 v_Color;
       void main() {
-        gl_FragColor = texture2D(u_Sampler, v_TexCoord);
+        gl_FragColor = v_Color;
       }
-    </script>
-    <script src="./jsmin/_lib/jquery.min.js"></script>
+    </script>    <script src="./jsmin/_lib/jquery.min.js"></script>
     <script src="./jsmin/_lib/doT.min.js"></script>
     <script src="./jsmin/_lib/webgl-utils.js"></script>
     <script src="./jsmin/_lib/webgl-debug.js"></script>
     <script src="./jsmin/_lib/cuon-utils.js"></script>
-    <script src="./jsmin/textureQuad.min.js?887b7e94b9?887b7e94b9"></script>
+    <script src="./jsmin/_lib/cuon-matrix.js"></script>
+    <script src="./jsmin/perspectiveView.min.js"></script>
   </body>
 </html>
